@@ -1,0 +1,57 @@
+time:
+  start: "2024-01-01"
+  dt_minutes: 15
+  periods: 35040            # full year @ 15-min
+  horizon_hours: 24
+
+calibration:
+  target_annual_load_kwh: 7500     # 7.5 MWh/yr typical UK
+  target_pv_yield_kwh: 2200        # 2.2 MWh/yr (3–4 kWp typical)
+  load_multiplier: 1.00
+  pv_multiplier: 1.00
+
+pv:
+  p_dc_stc_kw: 3.6
+  annual_deg_rate: 0.01
+  temp_coeff_per_c: 0.004
+  t_ref_c: 25.0
+
+battery:
+  e_nom_kwh: 5.0            # scales EFC into 325/290/285 band
+  soc_min: 0.10
+  soc_max: 0.95
+  p_ch_max_kw: 6.0
+  p_dis_max_kw: 6.0
+  eta_ch: 0.95
+  eta_dis: 0.95
+  replacement_cost_gbp: 3500
+  k_cal: 1.2e-5
+  k_cyc: 2.5e-4
+  alpha: 1.5
+  q_nom_Ah: 1000.0
+
+environment:
+  ambient_base_c: 15.0
+  ambient_amp_c: 10.0
+  pv_temp_rise_c_at_irr1: 20.0
+  carbon_intensity_base_kg_per_kwh: 0.17   # kg/kWh mean
+  carbon_intensity_amp: 0.06               # daily swing
+
+economics:
+  price_import_base_gbp_per_kwh: 0.21
+  price_peak_spread_gbp_per_kwh: 0.18      # peak ≈ 0.435
+  price_offpeak_reduction_gbp_per_kwh: 0.12 # off-peak ≈ 0.115
+  export_multiplier: 0.35                   # SEG-like
+  peak_export_threshold_gbp_per_kwh: 0.30   # discourage export arbitrage
+
+  baseline_price_low: 0.19
+  baseline_price_high: 0.33
+  batt_price_low: 0.25
+  batt_price_high: 0.315
+  full_price_low: 0.26
+  full_price_high: 0.325
+
+  lambda_batt: 0.0
+  lambda_batt_full: 1.2
+  lambda_pv: 0.20
+  batt_deg_marginal_gbp_per_kwh: 0.03
