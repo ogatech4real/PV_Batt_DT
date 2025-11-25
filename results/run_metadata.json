@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-11-18T16:26:05+00:00",
+  "battery_e_nom_kwh": 5.0,
+  "dt_minutes": 15,
+  "horizon_hours": 24,
+  "scenarios": [
+    "baseline",
+    "batt",
+    "full"
+  ],
+  "input_file": "data/sim_input.csv"
+}
