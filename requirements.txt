@@ -6,3 +6,5 @@ matplotlib
 streamlit
 altair<5
 plotly
+# Python 3.13+: imghdr was removed from stdlib; Streamlit still uses it
+standard-imghdr
