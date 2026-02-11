@@ -1,6 +1,6 @@
 ## Important Notice
 
-This repository accompanies an IEEE Access manuscript currently under peer review.  
+This repository accompanies a manuscript currently under peer review.  
 It has been made publicly accessible **exclusively for reviewer and editorial evaluation**.  
 No part of this work, including the code, data, figures, or manuscript text, may be copied, reused, or cited until the article has been formally accepted and published.  
 
