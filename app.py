@@ -337,9 +337,17 @@ def render_kpi_cards_for_scenario(kpis: dict, scenario_name: str):
 
 def _kpi_bar_fig(kpis: pd.DataFrame, metric: str, title: str, y_label: str) -> px.bar:
     df = kpis.reset_index().rename(columns={"index": "Scenario"})
-    base_val = df.loc[df["Scenario"] == "Baseline", metric].iloc[0]
+    # Defensive typing: on some environments these columns can come through as
+    # object/string, which makes Plotly mis-scale axes (often showing 0–1 and no bars).
+    df[metric] = pd.to_numeric(df[metric], errors="coerce")
 
-    df["Δ_vs_Base_%"] = (df[metric] - base_val) / base_val * 100.0
+    base_series = df.loc[df["Scenario"] == "Baseline", metric]
+    base_val = float(base_series.iloc[0]) if len(base_series) else float("nan")
+
+    if np.isfinite(base_val) and base_val != 0:
+        df["Δ_vs_Base_%"] = (df[metric] - base_val) / base_val * 100.0
+    else:
+        df["Δ_vs_Base_%"] = np.nan
     df["Label"] = df.apply(
         lambda r: (
             f"{r[metric]:.0f} ({r['Δ_vs_Base_%']:+.1f}%)"
@@ -363,7 +371,21 @@ def _kpi_bar_fig(kpis: pd.DataFrame, metric: str, title: str, y_label: str) -> p
         title=title,
     )
     fig.update_traces(textposition="outside")
-    fig.update_yaxes(title=y_label, rangemode="tozero")
+    # Set an explicit y-range so the bars always render (even when text is outside).
+    y_vals = df[metric].to_numpy(dtype=float)
+    y_min = float(np.nanmin(y_vals)) if np.any(np.isfinite(y_vals)) else 0.0
+    y_max = float(np.nanmax(y_vals)) if np.any(np.isfinite(y_vals)) else 1.0
+    if not np.isfinite(y_min):
+        y_min = 0.0
+    if not np.isfinite(y_max) or y_max == y_min:
+        y_max = (y_min + 1.0) if np.isfinite(y_min) else 1.0
+    pad = 0.12 * (y_max - y_min)
+    if y_min >= 0:
+        y_range = [0.0, y_max + pad]
+    else:
+        y_range = [y_min - pad, y_max + pad]
+
+    fig.update_yaxes(title=y_label, range=y_range, rangemode="tozero")
     fig.update_layout(
         xaxis_title=None,
         legend_title=None,
